@@ -1,0 +1,9 @@
+@import "tailwindcss";
+
+.container {
+  @apply bg-white min-h-screen;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
