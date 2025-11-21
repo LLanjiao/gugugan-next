@@ -1,25 +1,37 @@
 #!/bin/bash
 
-APP_NAME="my-next-app"
-IMAGE_NAME="my-next-app"
-PORT=3000
+# ==============================
+# 配置区域（按需修改）
+# ==============================
+APP_NAME="nextjs-app"           # 容器名称
+IMAGE_NAME="my-next-app"        # 镜像名称
+APP_PORT=3000                   # 访问端口
+PROJECT_DIR="$(dirname $(pwd))" # 项目根目录
 
-echo "🚀 开始构建新镜像..."
+# ==============================
+# 开始部署
+# ==============================
+echo "🚀 正在部署 Next.js 项目..."
+echo "📁 项目目录: $PROJECT_DIR"
+
+cd $PROJECT_DIR
+
+echo "🔄 拉取最新代码..."
+git pull origin master
+
+echo "📦 构建镜像: $IMAGE_NAME"
 docker build -t $IMAGE_NAME .
 
-echo "🛑 停止旧容器（如果存在）..."
-docker stop $APP_NAME || true
+echo "🛑 停止旧容器（如果存在）: $APP_NAME"
+docker stop $APP_NAME 2>/dev/null || true
 
-echo "🗑 删除旧容器（如果存在）..."
-docker rm $APP_NAME || true
-
-echo "🧹 删除旧镜像（如果存在）..."
-docker rmi $(docker images -q $IMAGE_NAME | head -n 1) || true
+echo "🗑 删除旧容器（如果存在）: $APP_NAME"
+docker rm $APP_NAME 2>/dev/null || true
 
 echo "🚀 启动新容器..."
 docker run -d \
   --name $APP_NAME \
-  -p $PORT:3000 \
+  -p $APP_PORT:3000 \
   $IMAGE_NAME
 
 echo "🎉 部署完成！当前容器："
